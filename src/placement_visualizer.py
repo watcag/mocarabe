@@ -1,4 +1,4 @@
-# # -*- coding: future_fstrings -*-
+# # -*- coding: utf-8 -*-
 # add more colours/richer colour logic
 # draw full path
 # take into account  when enter and exit occurs at the same time
@@ -106,7 +106,7 @@ class MainApplication(tk.Frame):
         canvas.bind('<5>', lambda event : canvas.yview('scroll', 1, 'units'))
         canvas.bind('<Control-4>', lambda event : canvas.xview('scroll', -1, 'units'))
         canvas.bind('<Control-5>', lambda event : canvas.xview('scroll', 1, 'units'))
-    
+
         canvas.create_rectangle( 0, 0, Nx*self.stepx+3*offsetx, (Ny)*self.stepy+3*offsetx, fill="white" )
         if energy != 0:
             canvas.create_text( (Nx*self.stepx+3*offsetx)//2, 20, text=str(energy) )
@@ -144,7 +144,7 @@ class MainApplication(tk.Frame):
             offset = (p/num_of_nets)* (self.stepx-self.offsetx)
 
             src_pe = dfg_node_to_xy[int(src)]
-            
+
             canvas.create_text(
                 self.get_x1( src_pe[0] ) + random.randint(0,base_offsetx),
                 self.get_y1( src_pe[1] ) - random.randint(0,base_offsety),
@@ -256,7 +256,7 @@ class MainApplication(tk.Frame):
                                 fill="{}".format( palette[p % len( palette )])
                             )
                     else:
-                        # X 
+                        # X
                         canvas.create_line(
                             self.get_x1( src_pe[0] ),
                             self.get_y1( src_pe[1] ) - offset,
@@ -305,7 +305,7 @@ class MainApplication(tk.Frame):
 
         if output_path == "":
             output_path = "svg/placement.svg"
-      
+
         canvasvg.saveall(output_path, canvas, items=None, margin=10, tounicode=None)
 
         time.sleep(0.5)

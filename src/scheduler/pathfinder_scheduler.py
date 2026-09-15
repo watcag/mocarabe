@@ -1,4 +1,4 @@
-# # -*- coding: future_fstrings -*-
+# # -*- coding: utf-8 -*-
 import ast
 import heapq
 import os
@@ -524,7 +524,10 @@ def schedule( self, device, dataflow_mode,netlist, io_pes,boundingBoxEnabled,fil
         routed_connections = routed_connections
 
 
-    return scheduled_netlist
+    # Keep the scheduler interface consistent with the ILP implementation.
+    # Pathfinder does not build a mathematical program, so its solver counts
+    # are both zero.
+    return scheduled_netlist, 0, 0
 
 if __name__ == "__main__":
     # TODO make sure this still works
@@ -608,7 +611,6 @@ if __name__ == "__main__":
     f = open(f"{sched_dir}/pathfinder_Nx{Nx}-Ny{Ny}-C{C}-P{len(connections)}-T{T}.sol", "w")
     f.write(string)
     f.close()
-
 
 
 

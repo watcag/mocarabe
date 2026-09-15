@@ -1,4 +1,4 @@
-# -*- coding: future_fstrings -*-
+# -*- coding: utf-8 -*-
 import random
 
 from gurobipy import *
@@ -25,7 +25,7 @@ def initialize_state_ok( Nx, Ny, ii,dataflow_hypergraph, partitioned_op_map, typ
     from networkx.algorithms.dag import topological_sort
 
     initial_state = [0] * len( dataflow_hypergraph.ordered_node_id_list() )# number of nodes (or could be # of IOs+ mult partitions)
-    
+
     # \n
     # for ix in range( len( initial_state ) ): initial_state[ix] = ix # should be unique id
     every_pe = []
@@ -40,7 +40,7 @@ def initialize_state_ok( Nx, Ny, ii,dataflow_hypergraph, partitioned_op_map, typ
     node_operators = dataflow_hypergraph.extract_node_arithmetic_operators()
     node_in = dataflow_hypergraph.extract_input_nodes()
     node_out = dataflow_hypergraph.extract_output_nodes()
-    
+
     mul_nodes = []
     add_nodes = []
 
@@ -87,8 +87,8 @@ def initialize_state_ok( Nx, Ny, ii,dataflow_hypergraph, partitioned_op_map, typ
     #     initial_state[int(add_node)] =  start_xy[0] + start_xy[1] * Nx
 
 
-    
-    print(f"Starting energy: {debug_energy( dataflow_hypergraph, mul_nodes, add_nodes, io_nodes, initial_state,  Nx, Ny,ii):} ")    
+
+    print(f"Starting energy: {debug_energy( dataflow_hypergraph, mul_nodes, add_nodes, io_nodes, initial_state,  Nx, Ny,ii):} ")
 
     return initial_state, mul_nodes, add_nodes, io_nodes
 
@@ -99,7 +99,7 @@ def torus_min_distance_xy( sourcexy, sinkxy, Nx, Ny ):
     source_y = sourcexy // Nx
     sink_x = sinkxy % Nx
     sink_y = sinkxy // Nx
-    
+
     # assert( source_x < Nx )
     # assert( sink_x < Nx )
     # assert( source_y < Ny )
@@ -156,13 +156,13 @@ class AnnealingClusterPlacer(Annealer):
         self.mul_nodes = mul_nodes
         self.add_nodes = add_nodes
         self.io_nodes = io_nodes
-        
+
         super(AnnealingClusterPlacer, self).__init__(state)  # important!
 
     def move(self):
         initial_energy = self.energy()
 
-        
+
         a = random.randint(0, len(self.state) - 1)
         b = random.randint(0, len(self.state) - 1)
         self.state[a], self.state[b] = self.state[b], self.state[a]
@@ -176,12 +176,12 @@ class AnnealingClusterPlacer(Annealer):
         #     self.state[a], self.state[b] = self.state[b], self.state[a]
         # elif str(a) in self.add_nodes and str(b) in self.io_nodes:
         #     self.state[a], self.state[b] = self.state[b], self.state[a]
-        
+
         # print('moved')
         return self.energy() - initial_energy
 
     def energy(self):
-        
+
         # dfg_node_to_logical_pe = self.partitioned_netlist.dfg_v_to_partition_id
 
         current_sink = 0
@@ -207,7 +207,7 @@ class AnnealingClusterPlacer(Annealer):
                 # linear
                 # e = e + in_distance_xy[0]+min_distance_xy[1]
                 #square
-                
+
                 e = e + ( min_distance_x + 1) * ( min_distance_y + 1 )
         return e
 
@@ -223,13 +223,13 @@ class AnnealingNotSurePlacer(Annealer):
         # self.mul_nodes = mul_nodes
         # self.add_nodes = add_nodes
         # self.io_nodes = io_nodes
-        
+
         super(AnnealingNotSurePlacer, self).__init__(state)  # important!
 
     def move(self):
         initial_energy = self.energy()
 
-        
+
         a = random.randint(0, len(self.state) - 1)
         b = random.randint(0, len(self.state) - 1)
         self.state[a], self.state[b] = self.state[b], self.state[a]
@@ -243,12 +243,12 @@ class AnnealingNotSurePlacer(Annealer):
         #     self.state[a], self.state[b] = self.state[b], self.state[a]
         # elif str(a) in self.add_nodes and str(b) in self.io_nodes:
         #     self.state[a], self.state[b] = self.state[b], self.state[a]
-        
+
         # print('moved')
         return self.energy() - initial_energy
 
     def energy(self):
-        
+
         # dfg_node_to_logical_pe = self.partitioned_netlist.dfg_v_to_partition_id
 
         current_sink = 0
@@ -268,7 +268,7 @@ class AnnealingNotSurePlacer(Annealer):
                 # linear
                 # e = e + in_distance_xy[0]+min_distance_xy[1]
                 #square
-                
+
                 e = e + ( min_distance_xy[0] + 1) * ( min_distance_xy[1] + 1 )
 
         return e
@@ -295,9 +295,9 @@ def debug_energy( dataflow_hypergraph, mul_nodes, add_nodes, io_nodes, state,  N
                 # linear
                 # e = e + in_distance_xy[0]+min_distance_xy[1]
                 # square
-                
+
                 e = e + ( min_distance_xy[0] + 1) * ( min_distance_xy[1] + 1 )
-                
+
                 # print( f'from {source} at {state[source_pe]}=({state[source_pe] % Nx},{state[source_pe] // Nx}) to {sink} at {state[sink_pe]}=({state[sink_pe] % Nx},{state[sink_pe] // Nx}) : {min_distance_xy[0] + min_distance_xy[1]}' )
 
         return e

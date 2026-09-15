@@ -1,5 +1,9 @@
 debug.mps
+debug.lp
 gurobi.log
 log.csv
+log/
 svg/
-
+__pycache__/
+*.py[cod]
+proj/*_--*/

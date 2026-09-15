@@ -1,6 +1,8 @@
-# README for cgra-ilp/Mocarabe
+# Mocarabe
 
-There are three major components for setup: Gurobi installation, cgra-ilp dependency installation, and gcc-python-plugin setup
+Mocarabe is a research artifact for mapping compute graphs onto a coarse-grained reconfigurable architecture. Reproducing the complete flow requires three components: Gurobi, the Python dependencies, and the pinned GCC Python plugin.
+
+> **Reproduction status:** the Python sources compile with current Python 3, but the complete paper flow remains version- and license-gated. It requires a licensed Gurobi installation, the legacy GCC plugin toolchain, and—only for FPGA implementation—Xilinx Vivado 2020.1 and an Alveo U280. Precompiled graphs in `hgr/` let users skip the GCC plugin when evaluating the mapper itself.
 
 <a name="installing_gurobi"></a>
 ## Installing Gurobi
@@ -42,14 +44,16 @@ Now that Gurobi is installed, on to other dependencies!
 
 ## Other dependencies
 
-### Ubuntu 18.04.1 LTS, valid as of Feb 11 2021
+### Reference environment
+
+The paper artifact used Ubuntu 18.04.1 LTS; the instructions below were last validated on February 11, 2021.
 
 Run the following
 ```
 sudo apt update
-sudo apt install python3-pip python3-pil.imagetk dot2tex zsh gcc-10-plugin-dev jq
+sudo apt install python3-pip python3-pil.imagetk python3-tk dot2tex zsh gcc-10-plugin-dev jq
 
-# Please use python3 (3.6 and above, we use fstrings)
+# Use Python 3.6 or newer; the code uses f-strings.
 pip3 install -r requirements.txt
 ```
 
@@ -86,7 +90,7 @@ Each C file is currently taken from the `bitgpu/bench` repository as it is nicel
 
 
 # Workflow
-If you can run this next line without hitting an error, congratulations!  Your're all set up.
+If the next command completes without an error, the mapper is set up correctly.
 
 You can also setup the environment using venv as follows
 ```
@@ -99,13 +103,13 @@ python3 -m pip install -r requirements.txt
 python3 mocarabe.py -dfg hgr/int_poly3 -iod 1 -ard 1 -II 1 -C 2 --place_time 0.1 --sched_method ILP
 ```
 ## Compiling Benchmarks
-Our precompiled benchmarks are located in in `hgr/`. Do the following if you wish to compile your own:
+Our precompiled benchmarks are in `hgr/`. To compile your own:
 
 1. Initialize the pinned `watcag/gcc-python-plugin` submodule with `git submodule update --init --recursive`.
 2. Env vars for the gcc python plugin: `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<path/to/..>/gcc-python-plugin/gcc-c-api/:<path/to/..>/gcc-python-plugin/`
 3. From this repository, to create the DFG using gcc (example: int_gaussian.graph): `./gcc-with-python.sh hls.py "bench/bitgpu/int_gaussian.c"`
 
-For the `int_gaussian` benchmark, ouput would be in `hgr/int_gaussian/int_gaussian.hgr`.  Details on this format can be found in src/SRC_README.md under the dataflow_hypergraph heading.
+For the `int_gaussian` benchmark, output is written to `hgr/int_gaussian/int_gaussian.hgr`. Details of this format are in `src/SRC_README.md` under the `dataflow_hypergraph` heading.
 
 ## Running Benchmarks through Mocarabe
 Example usage: `python3 mocarabe.py -dfg hgr/int_poly3 -iod 1 -ard 1 -II 1 -C 2 --place_time 0.1 --sched_method ILP`
@@ -150,9 +154,9 @@ The entire architecture is designed for statically-scheduled,time-multiplexed op
 
 **CGRA implementation and floorplanning**
 
-We implement the Mocarabe overlay using parametric Verilog for PEs and  switches. We  use  Xilinx Vivado 2020.1 tosynthesize, place, and route the design on a Xilinx Alveo U280 card for analysis. We design hand-crafted placement scripts to effectively map the design and make use of FPGA resources while keeping the operation frequency high. Each logical block containing PE and switches is assigned to a physical block(Pblock) on the chip. We define an arbitrary estimate for eachPblock’s size as the number of logic slices  it contains, with each slice containing Look-Up Tables (LUTs) and flip flops.For instance, a 10×10 Pblock  can span the chip from slice X0Y0 to slice X9Y9, creating a rectangular area over the device that contains 100 slices.
+We implement the Mocarabe overlay using parametric Verilog for PEs and switches. Xilinx Vivado 2020.1 synthesizes, places, and routes the design on a Xilinx Alveo U280 for analysis. Hand-crafted placement scripts map the design efficiently while maintaining a high operating frequency. Each logical block containing a PE and switches is assigned to a physical block (Pblock). We estimate each Pblock's size by the number of logic slices it contains. For example, a 10×10 Pblock can span the device from slice X0Y0 to slice X9Y9, forming a rectangular area containing 100 slices.
 
-The current implementation supports up to three communication channels and the array size of up to 19 x 69. The figure below shows a device oview of a 19 x 69 array with 2 communication channels in Vivado.
+The current implementation supports up to three communication channels and arrays up to 19×69. The figure below shows the Vivado device view of a 19×69 array with two communication channels.
 
 ![](pics/device.png)
 
@@ -270,11 +274,9 @@ For each benchmark run, you can run `get_results.sh` using the following input a
   ./get_results.sh benchmark_name unroll_factor id target_frequency
 ```
 
-There are operator json files and scripts to run each benchmark for tarhetting ii 1-5 in each benchmark folder. You can either limit Vivado HLS to use the same number of operators as Mocarabe does (`run.sh`) or run Vivado HLS unconstrained so it can use as many operators as it wants.
+Each benchmark folder contains operator JSON files and scripts for target initiation intervals 1–5. You can either limit Vivado HLS to the same number of operators used by Mocarabe (`run.sh`) or run Vivado HLS unconstrained.
 
 Furthermore, there are sweep scripts `sweep.sh` and `sweep_unconstrained.sh` in hls folder to run a sweep of all benchmarks using gnu parallel (https://www.gnu.org/software/parallel/).
-
-
 
 
 

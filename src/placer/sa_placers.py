@@ -1,4 +1,4 @@
-# # -*- coding: future_fstrings -*-
+# # -*- coding: utf-8 -*-
 
 import abc
 import random
@@ -8,8 +8,6 @@ import itertools
 from gurobipy import *
 import timeit
 from simanneal import Annealer
-
-from placement_visualizer import visualize_placement
 
 def initialize_state( dfg_v_to_partition_id, Nx, Ny ):
 

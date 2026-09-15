@@ -1,4 +1,4 @@
-# # -*- coding: future_fstrings -*-
+# # -*- coding: utf-8 -*-
 import networkx as nx
 import itertools
 

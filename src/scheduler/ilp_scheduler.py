@@ -1,4 +1,4 @@
-# # -*- coding: future_fstrings -*-
+# # -*- coding: utf-8 -*-
 import ast
 import json
 import math
@@ -11,7 +11,7 @@ import func_timeout as timeout
 from gurobipy import *
 import numpy as np
 import timeit
-# # -*- coding: future_fstrings -*-
+# # -*- coding: utf-8 -*-
 import networkx as nx
 import itertools
 
