@@ -56,9 +56,9 @@ pip3 install -r requirements.txt
 
 ## GCC Plugin Setup
 
-Use the following command to add gcc python plugin:
+Initialize the pinned GCC Python plugin submodule:
 ```bash
-git submodule add ist-git@git.uwaterloo.ca:watcag-public/gcc-python-plugin.git src/gcc-python-plugin
+git submodule update --init --recursive
 ```
 Follow installation instructions from that repo.
 
@@ -101,7 +101,7 @@ python3 mocarabe.py -dfg hgr/int_poly3 -iod 1 -ard 1 -II 1 -C 2 --place_time 0.1
 ## Compiling Benchmarks
 Our precompiled benchmarks are located in in `hgr/`. Do the following if you wish to compile your own:
 
-1. `git checkout cgra-ilp` in the watcag/gcc-python-plugin repository.
+1. Initialize the pinned `watcag/gcc-python-plugin` submodule with `git submodule update --init --recursive`.
 2. Env vars for the gcc python plugin: `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<path/to/..>/gcc-python-plugin/gcc-c-api/:<path/to/..>/gcc-python-plugin/`
 3. From this repository, to create the DFG using gcc (example: int_gaussian.graph): `./gcc-with-python.sh hls.py "bench/bitgpu/int_gaussian.c"`
 
@@ -273,7 +273,6 @@ For each benchmark run, you can run `get_results.sh` using the following input a
 There are operator json files and scripts to run each benchmark for tarhetting ii 1-5 in each benchmark folder. You can either limit Vivado HLS to use the same number of operators as Mocarabe does (`run.sh`) or run Vivado HLS unconstrained so it can use as many operators as it wants.
 
 Furthermore, there are sweep scripts `sweep.sh` and `sweep_unconstrained.sh` in hls folder to run a sweep of all benchmarks using gnu parallel (https://www.gnu.org/software/parallel/).
-
 
 
 
